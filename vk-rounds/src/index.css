@@ -2,8 +2,162 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================
+   🎯 VARIÁVEIS GLOBAIS
+========================= */
+:root {
+  --vk-bg: #050505;
+  --vk-card: #121212;
+  --vk-soft: #1A1A1A;
+  --vk-border: #222;
+  --vk-text: #E5E5E5;
+  --vk-muted: #404040;
+  --vk-primary: #FF0000;
+}
+
+/* =========================
+   🧠 BASE
+========================= */
 body {
-  margin: 0;
-  background-color: #1a1a1a; /* Cor VK Team de fundo */
+  background: var(--vk-bg);
+  color: var(--vk-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================
+   🎯 RADIO BUTTON (ANTD)
+========================= */
+.ant-radio-button-wrapper {
+  background: transparent !important;
+  color: var(--vk-muted) !important;
+  border: 1px solid var(--vk-border) !important;
+  border-radius: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-radio-button-wrapper:hover {
+  color: white !important;
+  border-color: var(--vk-primary) !important;
+}
+
+.ant-radio-button-wrapper-checked {
+  background: white !important;
+  color: black !important;
+  border-color: white !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+/* =========================
+   🔢 INPUT NUMBER (ANTD)
+========================= */
+.ant-input-number {
+  background: var(--vk-card) !important;
+  border: 1px solid var(--vk-border) !important;
+  transition: all 0.3s ease;
+}
+
+.ant-input-number:hover {
+  border-color: var(--vk-primary) !important;
+}
+
+.ant-input-number-focused {
+  border-color: var(--vk-primary) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.ant-input-number-input {
+  color: white !important;
+  font-weight: bold;
+}
+
+/* =========================
+   ✍️ INPUT TEXT (ANTD)
+========================= */
+.ant-input {
+  transition: all 0.3s ease !important;
+}
+
+.ant-input:focus {
+  border-color: var(--vk-primary) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.25);
+}
+
+/* =========================
+   🔔 MESSAGES (ANTD)
+========================= */
+.ant-message-notice-content {
+  background: #0A0A0A !important;
+  border: 1px solid var(--vk-border);
+  color: white !important;
+}
+
+/* =========================
+   🎯 BOTÕES GERAIS
+========================= */
+button {
+  transition: all 0.25s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* =========================
+   🧊 CARDS (UTIL)
+========================= */
+.vk-card {
+  background: var(--vk-soft);
+  border: 1px solid var(--vk-border);
+  transition: all 0.3s ease;
+}
+
+.vk-card:hover {
+  border-color: var(--vk-primary);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+}
+
+/* =========================
+   🔥 GLOW EFFECT
+========================= */
+.vk-glow {
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
+}
+
+/* =========================
+   🧠 TEXTO SECUNDÁRIO
+========================= */
+.vk-muted {
+  color: var(--vk-muted);
+}
+
+/* =========================
+   🖱️ SCROLLBAR PRO
+========================= */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vk-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #222 0%,
+    #444 100%
+  );
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vk-primary);
+}
+
+/* =========================
+   ✨ SELEÇÃO DE TEXTO
+========================= */
+::selection {
+  background: var(--vk-primary);
   color: white;
 }
