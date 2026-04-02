@@ -5,71 +5,100 @@ export const gerarEscalaDeRounds = (
   config: ConfiguracaoTreino
 ): Round[] => {
   const rounds: Round[] = [];
-  
-  // Histórico para evitar repetições: Map<AtletaID, Set<OponenteID>>
-  const historicoLutas = new Map<string, string[]>();
-  
-  // Inicializa contadores de descanso e rounds
-  const roundsLutados = new Map<string, number>();
+
+  // Matriz de histórico: Quantas vezes o AtletaA lutou contra o AtletaB
+  const historicoLutas = new Map<string, Map<string, number>>();
+  // Controle de descanso: Quantas vezes o atleta já ficou de fora
+  const descansos = new Map<string, number>();
+
+  // Inicializando as estruturas de controle
   atletas.forEach(a => {
-    historicoLutas.set(a.id, []);
-    roundsLutados.set(a.id, 0);
+    historicoLutas.set(a.id, new Map<string, number>());
+    descansos.set(a.id, 0);
   });
+
+  const getLutas = (id1: string, id2: string) => historicoLutas.get(id1)?.get(id2) || 0;
+  const registrarLuta = (a1: Atleta, a2: Atleta) => {
+    const hist1 = historicoLutas.get(a1.id)!;
+    const hist2 = historicoLutas.get(a2.id)!;
+    hist1.set(a2.id, (hist1.get(a2.id) || 0) + 1);
+    hist2.set(a1.id, (hist2.get(a1.id) || 0) + 1);
+  };
+
+  // Função para achar o melhor oponente (quem lutou menos vezes)
+  const acharMelhorOponente = (lutador: Atleta, candidatos: Atleta[]): Atleta => {
+    return candidatos.sort((a, b) => getLutas(lutador.id, a.id) - getLutas(lutador.id, b.id))[0];
+  };
 
   for (let r = 1; r <= config.totalRounds; r++) {
     const ehFaseSeparada = r <= config.roundsSeparados;
-    let disponiveis = [...atletas];
     const confrontosDoRound: Confronto[] = [];
     let descansando: Atleta | null = null;
+    let disponiveis = [...atletas];
 
-    // 1. Lógica de Descanso (se ímpar ou rotatividade)
+    // --- REGRA 1: QUEM DESCANSA? (Ímpar) ---
     if (disponiveis.length % 2 !== 0) {
-      // Prioridade de descanso para quem mais lutou ou sorteio justo
-      disponiveis.sort((a, b) => (roundsLutados.get(b.id) || 0) - (roundsLutados.get(a.id) || 0));
-      descansando = disponiveis.shift()!;
+      const alunos = disponiveis.filter(a => a.tipo === 'ALUNO');
+
+      if (alunos.length > 0) {
+        // Ordena alunos para quem descansou MENOS ser o escolhido
+        alunos.sort((a, b) => descansos.get(a.id)! - descansos.get(b.id)!);
+        descansando = alunos[0];
+      } else {
+        // Safety net matemática: se tiver 3 professores e 0 alunos, a física exige que alguém descanse
+        disponiveis.sort((a, b) => descansos.get(a.id)! - descansos.get(b.id)!);
+        descansando = disponiveis[0];
+      }
+
+      // Remove o descansando da lista de disponíveis do round
+      disponiveis = disponiveis.filter(a => a.id !== descansando!.id);
+      descansos.set(descansando!.id, descansos.get(descansando!.id)! + 1);
     }
 
-    // 2. Embaralhar para garantir aleatoriedade inicial
-    disponiveis = disponiveis.sort(() => Math.random() - 0.5);
+    // Separa os disponíveis do round por hierarquia
+    let profsDisponiveis = disponiveis.filter(a => a.tipo === 'PROFESSOR');
+    let alunosDisponiveis = disponiveis.filter(a => a.tipo === 'ALUNO');
 
-    // 3. Matching
-    while (disponiveis.length >= 2) {
-      const a1 = disponiveis.shift()!;
-      
-      // Encontrar o melhor parceiro para a1
-      const parceiroIndex = disponiveis.findIndex(a2 => {
-        const mesmaCat = a1.tipo === a2.tipo;
-        const jaLutaram = historicoLutas.get(a1.id)?.includes(a2.id);
-        
-        if (ehFaseSeparada) {
-          return mesmaCat && !jaLutaram;
+    // --- REGRA 2: PROFESSORES SÃO PRIORIDADE E NUNCA PARAM ---
+    while (profsDisponiveis.length > 0) {
+      const p1 = profsDisponiveis.shift()!; // Pega o primeiro professor
+      let oponente: Atleta;
+
+      if (ehFaseSeparada) {
+        if (profsDisponiveis.length > 0) {
+          // Tem outro professor para lutar? Puxa ele.
+          oponente = acharMelhorOponente(p1, profsDisponiveis);
+          profsDisponiveis = profsDisponiveis.filter(p => p.id !== oponente.id);
+        } else {
+          // Professor sobrou na fase separada? Quebra a regra e puxa um aluno!
+          oponente = acharMelhorOponente(p1, alunosDisponiveis);
+          alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
         }
-        return !jaLutaram;
-      });
+      } else {
+        // Fase Mista: O professor pode pegar qualquer um (professor ou aluno)
+        const todosRestantes = [...profsDisponiveis, ...alunosDisponiveis];
+        oponente = acharMelhorOponente(p1, todosRestantes);
 
-      // Se não achou parceiro ideal (que não lutou), pega o primeiro disponível (fallback)
-      const finalIndex = parceiroIndex !== -1 ? parceiroIndex : 0;
-      const a2 = disponiveis.splice(finalIndex, 1)[0];
+        // Remove de onde ele foi puxado
+        profsDisponiveis = profsDisponiveis.filter(p => p.id !== oponente.id);
+        alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
+      }
 
-      // Registrar Luta
-      confrontosDoRound.push({
-        id: `${r}-${a1.id}-${a2.id}`,
-        atleta1: a1,
-        atleta2: a2
-      });
-
-      // Atualizar Histórico
-      historicoLutas.get(a1.id)?.push(a2.id);
-      historicoLutas.get(a2.id)?.push(a1.id);
-      roundsLutados.set(a1.id, (roundsLutados.get(a1.id) || 0) + 1);
-      roundsLutados.set(a2.id, (roundsLutados.get(a2.id) || 0) + 1);
+      registrarLuta(p1, oponente);
+      confrontosDoRound.push({ id: crypto.randomUUID(), atleta1: p1, atleta2: oponente });
     }
 
-    rounds.push({
-      numero: r,
-      confrontos: confrontosDoRound,
-      descansando: descansando || null
-    });
+    // --- REGRA 3: ALUNOS QUE SOBRARAM LUTAM ENTRE SI ---
+    while (alunosDisponiveis.length > 0) {
+      const a1 = alunosDisponiveis.shift()!;
+      const oponente = acharMelhorOponente(a1, alunosDisponiveis);
+      alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
+
+      registrarLuta(a1, oponente);
+      confrontosDoRound.push({ id: crypto.randomUUID(), atleta1: a1, atleta2: oponente });
+    }
+
+    rounds.push({ numero: r, confrontos: confrontosDoRound, descansando });
   }
 
   return rounds;
