@@ -25,9 +25,13 @@ export const gerarEscalaDeRounds = (
     hist2.set(a1.id, (hist2.get(a1.id) || 0) + 1);
   };
 
-  // Função para achar o melhor oponente (quem lutou menos vezes)
+  // NOVA LÓGICA COM ALEATORIEDADE:
   const acharMelhorOponente = (lutador: Atleta, candidatos: Atleta[]): Atleta => {
-    return candidatos.sort((a, b) => getLutas(lutador.id, a.id) - getLutas(lutador.id, b.id))[0];
+    // 1. Embaralha os candidatos (fator caos para gerar sequências diferentes)
+    const candidatosEmbaralhados = [...candidatos].sort(() => Math.random() - 0.5);
+    
+    // 2. Ordena baseado no histórico (matemática das repetições)
+    return candidatosEmbaralhados.sort((a, b) => getLutas(lutador.id, a.id) - getLutas(lutador.id, b.id))[0];
   };
 
   for (let r = 1; r <= config.totalRounds; r++) {
@@ -36,50 +40,47 @@ export const gerarEscalaDeRounds = (
     let descansando: Atleta | null = null;
     let disponiveis = [...atletas];
 
-    // --- REGRA 1: QUEM DESCANSA? (Ímpar) ---
     if (disponiveis.length % 2 !== 0) {
       const alunos = disponiveis.filter(a => a.tipo === 'ALUNO');
-
+      
       if (alunos.length > 0) {
-        // Ordena alunos para quem descansou MENOS ser o escolhido
-        alunos.sort((a, b) => descansos.get(a.id)! - descansos.get(b.id)!);
+        // Ordena alunos pelo descanso, usando aleatoriedade para desempate
+        alunos.sort((a, b) => {
+            const diff = descansos.get(a.id)! - descansos.get(b.id)!;
+            return diff === 0 ? Math.random() - 0.5 : diff;
+        });
         descansando = alunos[0];
       } else {
-        // Safety net matemática: se tiver 3 professores e 0 alunos, a física exige que alguém descanse
-        disponiveis.sort((a, b) => descansos.get(a.id)! - descansos.get(b.id)!);
+        disponiveis.sort((a, b) => {
+            const diff = descansos.get(a.id)! - descansos.get(b.id)!;
+            return diff === 0 ? Math.random() - 0.5 : diff;
+        });
         descansando = disponiveis[0];
       }
-
-      // Remove o descansando da lista de disponíveis do round
+      
       disponiveis = disponiveis.filter(a => a.id !== descansando!.id);
       descansos.set(descansando!.id, descansos.get(descansando!.id)! + 1);
     }
 
-    // Separa os disponíveis do round por hierarquia
-    let profsDisponiveis = disponiveis.filter(a => a.tipo === 'PROFESSOR');
-    let alunosDisponiveis = disponiveis.filter(a => a.tipo === 'ALUNO');
+    // A partir daqui, embaralhamos quem começa escolhendo para não ser sempre a mesma ordem
+    let profsDisponiveis = disponiveis.filter(a => a.tipo === 'PROFESSOR').sort(() => Math.random() - 0.5);
+    let alunosDisponiveis = disponiveis.filter(a => a.tipo === 'ALUNO').sort(() => Math.random() - 0.5);
 
-    // --- REGRA 2: PROFESSORES SÃO PRIORIDADE E NUNCA PARAM ---
     while (profsDisponiveis.length > 0) {
-      const p1 = profsDisponiveis.shift()!; // Pega o primeiro professor
+      const p1 = profsDisponiveis.shift()!;
       let oponente: Atleta;
 
       if (ehFaseSeparada) {
         if (profsDisponiveis.length > 0) {
-          // Tem outro professor para lutar? Puxa ele.
           oponente = acharMelhorOponente(p1, profsDisponiveis);
           profsDisponiveis = profsDisponiveis.filter(p => p.id !== oponente.id);
         } else {
-          // Professor sobrou na fase separada? Quebra a regra e puxa um aluno!
           oponente = acharMelhorOponente(p1, alunosDisponiveis);
           alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
         }
       } else {
-        // Fase Mista: O professor pode pegar qualquer um (professor ou aluno)
         const todosRestantes = [...profsDisponiveis, ...alunosDisponiveis];
         oponente = acharMelhorOponente(p1, todosRestantes);
-
-        // Remove de onde ele foi puxado
         profsDisponiveis = profsDisponiveis.filter(p => p.id !== oponente.id);
         alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
       }
@@ -88,12 +89,11 @@ export const gerarEscalaDeRounds = (
       confrontosDoRound.push({ id: crypto.randomUUID(), atleta1: p1, atleta2: oponente });
     }
 
-    // --- REGRA 3: ALUNOS QUE SOBRARAM LUTAM ENTRE SI ---
     while (alunosDisponiveis.length > 0) {
       const a1 = alunosDisponiveis.shift()!;
       const oponente = acharMelhorOponente(a1, alunosDisponiveis);
       alunosDisponiveis = alunosDisponiveis.filter(a => a.id !== oponente.id);
-
+      
       registrarLuta(a1, oponente);
       confrontosDoRound.push({ id: crypto.randomUUID(), atleta1: a1, atleta2: oponente });
     }

@@ -161,3 +161,11 @@ button:active {
   background: var(--vk-primary);
   color: white;
 }
+
+@media print {
+  body { background: white !important; }
+  .no-print { display: none !important; }
+  .vk-main-panel { box-shadow: none !important; margin: 0 !important; width: 100% !important; }
+  .vk-table { border: 2px solid #000; }
+  .vk-table th, .vk-table td { color: black !important; border: 1px solid #ccc !important; }
+}
