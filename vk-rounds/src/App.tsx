@@ -15,7 +15,7 @@ export default function App() {
     if (!nome.trim()) return;
     setAtletas([...atletas, { id: crypto.randomUUID(), nome: nome.toUpperCase(), tipo }]);
     setNome('');
-    setRounds([]); 
+    setRounds([]);
   };
 
   const handleGerar = () => {
@@ -39,72 +39,52 @@ export default function App() {
 
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm, token: { colorPrimary: '#38b000', colorBgContainer: '#121212', colorBorder: '#333' } }}>
-      
-      {/* Contêiner Pai: Fundo Preto Absoluto para o que sobrar da tela */}
-      <div className="flex justify-center items-center h-screen w-full bg-black overflow-hidden">
+      <div className="flex justify-center items-center h-screen w-full bg-black overflow-hidden print-expand">
         
-        {/* O APARELHO (CANVAS): 
-          Aqui está a mágica. Forçamos o contêiner a ter EXATAMENTE a proporção 1080x1920.
-          O calc() impede que a imagem dê "zoom" e corte as logos laterais.
-        */}
-        <div 
-          className="relative shadow-2xl"
+        {/* O APARELHO (CANVAS) */}
+        <div
+          className="relative shadow-2xl print-expand bg-canvas"
           style={{
-            width: '100%',
-            height: '100%',
-            maxHeight: '100vh',
-            maxWidth: 'calc(100vh * (1080 / 1920))', // Mantém a proporção exata sem cortar
+            width: '100%', height: '100%', maxHeight: '100vh', maxWidth: 'calc(100vh * (1080 / 1920))',
             aspectRatio: '1080 / 1920',
             backgroundImage: `url('${import.meta.env.BASE_URL}bg-app.png')`,
-            backgroundSize: '100% 100%', // Estica milimetricamente na proporção da div
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
+            backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'
           }}
         >
-          
-          {/* SAFE AREA (TATAME CENTRAL): 
-            Usando a sua matemática: X=165px (15.277%), Y=210px (10.937%), W=750px (69.444%), H=1500px (78.125%)
-          */}
-          <div 
-            className="absolute flex flex-col hide-scroll"
+          {/* SAFE AREA (Ajustada para o Header Fixo) */}
+          <div
+            className="absolute flex flex-col print-expand"
             style={{
-              left: '15.277%',   
-              width: '69.444%',  
-              top: '10.937%',    
-              height: '78.125%', 
-              overflowY: 'auto',
-              overflowX: 'hidden'
+              left: '15.277%', width: '69.444%', top: '10.937%', height: '78.125%',
+              padding: '6% 5% 8% 5%'
             }}
           >
-            
-            {/* CONTEÚDO DA SAFE AREA */}
-            <div className="flex flex-col gap-3 p-1 min-h-full">
+            {/* 📍 CABEÇALHO FIXO (Nunca some) */}
+            <div className="text-center pb-2 border-b border-[#333] shrink-0">
+              <h1 className="text-lg md:text-xl font-black text-gray-200 drop-shadow-md tracking-widest uppercase italic leading-tight">
+                VK TEAM <br /><span className="text-gray-500 text-sm md:text-base">ROUNDS</span>
+              </h1>
+            </div>
+
+            {/* 📜 CONTEÚDO ROLÁVEL */}
+            <div className="flex-1 overflow-y-auto hide-scroll flex flex-col gap-3 pt-3 print-expand">
               
-              {/* TÍTULO DE VOLTA E CENTRALIZADO */}
-              <div className="text-center pb-2 border-b border-[#333] pt-2">
-                <h1 className="text-lg md:text-xl font-black text-gray-200 drop-shadow-md tracking-widest uppercase italic leading-tight">
-                  VK TEAM <br/><span className="text-gray-500 text-sm md:text-base">ROUNDS</span>
-                </h1>
-              </div>
-              
-              {/* CONFIGURAÇÕES DE ROUND */}
-              <div className="bg-[#111]/90 p-2 rounded-lg border border-[#333] flex justify-between items-center mt-1">
+              <div className="bg-[#111]/90 p-2 rounded-lg border border-[#333] flex justify-between items-center print-hide">
                 <div className="flex flex-col">
                   <span className="text-[9px] text-gray-400 font-bold uppercase mb-1">Rounds Total</span>
-                  <Select size="small" value={config.totalRounds} onChange={v => setConfig({...config, totalRounds: v})} className="w-14 font-bold">
-                    {[4,6,8,10,12].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
+                  <Select size="small" value={config.totalRounds} onChange={v => setConfig({ ...config, totalRounds: v })} className="w-14 font-bold">
+                    {[4, 6, 8, 10, 12].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
                   </Select>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[9px] text-gray-400 font-bold uppercase mb-1">Separados</span>
-                  <Select size="small" value={config.roundsSeparados} onChange={v => setConfig({...config, roundsSeparados: v})} className="w-14 font-bold">
-                    {[0,1,2,4,6].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
+                  <Select size="small" value={config.roundsSeparados} onChange={v => setConfig({ ...config, roundsSeparados: v })} className="w-14 font-bold">
+                    {[0, 1, 2, 4, 6].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
                   </Select>
                 </div>
               </div>
 
-              {/* INSCRIÇÃO */}
-              <div className="bg-[#111]/90 p-2 rounded-lg border border-[#333] flex flex-col gap-2">
+              <div className="bg-[#111]/90 p-2 rounded-lg border border-[#333] flex flex-col gap-2 print-hide">
                 <Input placeholder="NOME DO ATLETA" className="font-bold text-xs uppercase text-center" value={nome} onChange={e => setNome(e.target.value)} onPressEnter={handleAdd} />
                 <div className="flex gap-2">
                   <Select value={tipo} onChange={setTipo} className="flex-1 font-bold text-[10px]">
@@ -117,10 +97,9 @@ export default function App() {
                 </div>
               </div>
 
-              {/* LISTAS (Lado a lado) */}
-              <div className="flex gap-2 h-36">
+              <div className="flex gap-2 h-36 print-hide">
                 <div className="flex-1 border border-[#333] rounded bg-[#161616] flex flex-col overflow-hidden">
-                  <div className="header-alunos text-center py-1 text-[8px] text-gray-300 font-black uppercase">Alunos</div>
+                  <div className="text-center py-1 text-[8px] text-gray-300 font-black uppercase bg-[#222]">Alunos</div>
                   <div className="flex-1 overflow-y-auto p-1 hide-scroll">
                     {atletas.filter(a => a.tipo === 'ALUNO').map(a => (
                       <div key={a.id} className="flex justify-between items-center py-1 px-1 border-b border-[#222]">
@@ -131,7 +110,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="flex-1 border border-[#444] rounded bg-[#161616] flex flex-col overflow-hidden">
-                  <div className="header-professores text-center py-1 text-[8px] text-gray-200 font-black uppercase">Professores</div>
+                  <div className="text-center py-1 text-[8px] text-gray-200 font-black uppercase bg-[#222]">Professores</div>
                   <div className="flex-1 overflow-y-auto p-1 hide-scroll">
                     {atletas.filter(a => a.tipo === 'PROFESSOR').map(a => (
                       <div key={a.id} className="flex justify-between items-center py-1 px-1 border-b border-[#222]">
@@ -143,8 +122,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* BOTÕES DE AÇÃO PRINCIPAL */}
-              <div className="flex flex-col gap-2 mt-1">
+              <div className="flex flex-col gap-2 print-hide">
                 {atletas.length >= 2 && (
                   <button onClick={handleGerar} className="btn-generate-green w-full py-2 text-[10px] shadow-md">
                     GERAR ESCALA DE ROUNDS
@@ -155,37 +133,37 @@ export default function App() {
                 </button>
               </div>
 
-              {/* TABELA DE RESULTADOS */}
+              {/* TABELA E PDF */}
               {rounds.length > 0 && (
                 <div className="mt-2 border-t border-[#333] pt-3 animate-in fade-in">
-                  <h3 className="text-center font-black text-gray-400 mb-2 text-[9px] uppercase tracking-widest">Ordem de Combate</h3>
-                  
-                  <div className="overflow-x-auto pb-2 hide-scroll">
+                  <h3 className="text-center font-black text-gray-400 mb-2 text-[9px] uppercase tracking-widest print:text-black">Ordem de Combate</h3>
+
+                  <div className="overflow-x-auto pb-2 hide-scroll print-expand">
                     <table className="vk-table w-full shadow-lg">
                       <thead>
                         <tr>
                           <th>R</th>
                           {colunasCombate.map(num => <th key={num}>LUTA {num}</th>)}
-                          <th className="text-gray-500">PAUSA</th>
+                          <th className="text-gray-500 print:text-black">PAUSA</th>
                         </tr>
                       </thead>
                       <tbody>
                         {rounds.map(r => (
                           <tr key={r.numero}>
-                            <td className="font-black bg-[#222] text-white text-[10px]">{r.numero}</td>
+                            <td className="font-black bg-[#222] text-white text-[10px] print:bg-gray-200 print:text-black">{r.numero}</td>
                             {colunasCombate.map(num => {
                               const luta = r.confrontos[num - 1];
                               return (
                                 <td key={num} className="whitespace-nowrap">
                                   {luta ? (
-                                    <span className="text-[9px] font-bold text-gray-300">
+                                    <span className="text-[9px] font-bold text-gray-300 print:text-black">
                                       {luta.atleta1.nome} <span className="text-gray-600 italic mx-0.5">v</span> {luta.atleta2.nome}
                                     </span>
                                   ) : <span className="text-gray-700">-</span>}
                                 </td>
                               );
                             })}
-                            <td className="text-[8px] font-bold text-gray-500 bg-[#111] whitespace-nowrap">
+                            <td className="text-[8px] font-bold text-gray-500 bg-[#111] whitespace-nowrap print:bg-white print:text-black">
                               {r.descansando ? r.descansando.nome : '-'}
                             </td>
                           </tr>
@@ -193,8 +171,9 @@ export default function App() {
                       </tbody>
                     </table>
                   </div>
-
-                  <div className="flex flex-col gap-2 mt-3 pb-8">
+                  
+                  {/* BOTOES FINAIS */}
+                  <div className="flex flex-col gap-2 mt-3 pb-4 print-hide">
                     <button onClick={handleGerar} className="btn-generate-blue w-full py-2.5 text-[10px]">
                       NOVA SEQUÊNCIA
                     </button>
@@ -202,6 +181,7 @@ export default function App() {
                       EXPORTAR PDF
                     </button>
                   </div>
+
                 </div>
               )}
             </div>
