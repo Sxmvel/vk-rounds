@@ -1,171 +1,89 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* =========================
-   🎯 VARIÁVEIS GLOBAIS
-========================= */
-:root {
-  --vk-bg: #050505;
-  --vk-card: #121212;
-  --vk-soft: #1A1A1A;
-  --vk-border: #222;
-  --vk-text: #E5E5E5;
-  --vk-muted: #404040;
-  --vk-primary: #FF0000;
-}
-
-/* =========================
-   🧠 BASE
-========================= */
 body {
-  background: var(--vk-bg);
-  color: var(--vk-text);
-  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  /* Fundo temático com overlay escuro */
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+              url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat fixed;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-h: 100vh;
 }
 
-/* =========================
-   🎯 RADIO BUTTON (ANTD)
-========================= */
-.ant-radio-button-wrapper {
-  background: transparent !important;
-  color: var(--vk-muted) !important;
-  border: 1px solid var(--vk-border) !important;
-  border-radius: 0 !important;
-  transition: all 0.3s ease !important;
+/* Painel Principal */
+.vk-main-panel {
+  background: rgba(240, 242, 245, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-.ant-radio-button-wrapper:hover {
-  color: white !important;
-  border-color: var(--vk-primary) !important;
-}
+/* Cabeçalhos de Categoria */
+.header-alunos { background: #4a69bd; border-radius: 8px 8px 0 0; }
+.header-professores { background: #e67e22; border-radius: 8px 8px 0 0; }
 
-.ant-radio-button-wrapper-checked {
-  background: white !important;
-  color: black !important;
-  border-color: white !important;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-}
+/* Tabela Customizada */
+.vk-table { width: 100%; border-collapse: collapse; background: white; border-radius: 4px; overflow: hidden; }
+.vk-table th { background: #d1d8e0; color: #4b6584; padding: 12px; font-size: 13px; text-transform: uppercase; border: 1px solid #b2bec3; }
+.vk-table td { padding: 10px; border: 1px solid #d1d8e0; text-align: center; font-weight: 500; color: #2f3640; }
+.vk-table tr:nth-child(even) { background: #f1f2f6; }
 
-/* =========================
-   🔢 INPUT NUMBER (ANTD)
-========================= */
-.ant-input-number {
-  background: var(--vk-card) !important;
-  border: 1px solid var(--vk-border) !important;
-  transition: all 0.3s ease;
-}
-
-.ant-input-number:hover {
-  border-color: var(--vk-primary) !important;
-}
-
-.ant-input-number-focused {
-  border-color: var(--vk-primary) !important;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-}
-
-.ant-input-number-input {
-  color: white !important;
-  font-weight: bold;
-}
-
-/* =========================
-   ✍️ INPUT TEXT (ANTD)
-========================= */
-.ant-input {
-  transition: all 0.3s ease !important;
-}
-
-.ant-input:focus {
-  border-color: var(--vk-primary) !important;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.25);
-}
-
-/* =========================
-   🔔 MESSAGES (ANTD)
-========================= */
-.ant-message-notice-content {
-  background: #0A0A0A !important;
-  border: 1px solid var(--vk-border);
-  color: white !important;
-}
-
-/* =========================
-   🎯 BOTÕES GERAIS
-========================= */
-button {
-  transition: all 0.25s ease;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-/* =========================
-   🧊 CARDS (UTIL)
-========================= */
-.vk-card {
-  background: var(--vk-soft);
-  border: 1px solid var(--vk-border);
-  transition: all 0.3s ease;
-}
-
-.vk-card:hover {
-  border-color: var(--vk-primary);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
-}
-
-/* =========================
-   🔥 GLOW EFFECT
-========================= */
-.vk-glow {
-  box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
-}
-
-/* =========================
-   🧠 TEXTO SECUNDÁRIO
-========================= */
-.vk-muted {
-  color: var(--vk-muted);
-}
-
-/* =========================
-   🖱️ SCROLLBAR PRO
-========================= */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--vk-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    #222 0%,
-    #444 100%
-  );
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--vk-primary);
-}
-
-/* =========================
-   ✨ SELEÇÃO DE TEXTO
-========================= */
-::selection {
-  background: var(--vk-primary);
+/* Botões com Gradiente */
+.btn-generate {
+  background: linear-gradient(to bottom, #55a630, #2b9348);
+  border: 1px solid #1b4332;
   color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 0 #1b4332;
 }
+.btn-generate:active { transform: translateY(2px); box-shadow: 0 2px 0 #1b4332; }
 
+/* Estilos de Impressão / Exportação PDF */
 @media print {
-  body { background: white !important; }
-  .no-print { display: none !important; }
-  .vk-main-panel { box-shadow: none !important; margin: 0 !important; width: 100% !important; }
-  .vk-table { border: 2px solid #000; }
-  .vk-table th, .vk-table td { color: black !important; border: 1px solid #ccc !important; }
+  @page {
+    size: landscape;
+    margin: 1cm;
+  }
+
+  body { 
+    background: white !important; 
+    font-size: 10pt; /* Reduz a fonte base */
+  }
+  
+  .no-print { 
+    display: none !important; 
+  }
+
+  /*
+   Forçamos todos os containers a mostrarem o conteúdo oculto (overflow: visible)
+  */
+  .vk-main-panel,
+  .overflow-x-auto,
+  .overflow-hidden { 
+    box-shadow: none !important; 
+    margin: 0 !important; 
+    padding: 0 !important;
+    width: 100% !important; 
+    max-width: none !important;
+    overflow: visible !important; /* Tira o corte do scroll */
+  }
+
+  /* Ajustes da Tabela para caber na folha */
+  .vk-table { 
+    border: 2px solid #000; 
+    width: 100% !important;
+    table-layout: auto !important;
+  }
+
+  .vk-table th, .vk-table td { 
+    color: black !important; 
+    border: 1px solid #888 !important; 
+    padding: 4px 6px !important; /* Espaçamento mais enxuto */
+    font-size: 11px !important; /* Letra menor na tabela */
+    white-space: nowrap !important; /* Impede os nomes de quebrarem de linha */
+  }
+
+  /* Diminui o "VS" vermelho para economizar espaço nas colunas */
+  .vk-table .italic {
+    font-size: 9px !important;
+    margin: 0 4px !important;
+  }
 }
