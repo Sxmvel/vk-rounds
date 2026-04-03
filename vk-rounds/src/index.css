@@ -2,39 +2,105 @@
 
 body {
   margin: 0;
-  /* Fundo temático com overlay escuro */
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-              url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat fixed;
+  /* Fundo Metálico Escuro Mantido */
+  background: radial-gradient(circle at top, #2a2a2a 0%, #050505 100%);
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-h: 100vh;
+  color: #e5e5e5;
 }
 
-/* Painel Principal */
+/* Painel Principal Fosco Mantido */
 .vk-main-panel {
-  background: rgba(240, 242, 245, 0.95);
+  background: #141414;
+  border: 1px solid #2a2a2a;
   border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Cabeçalhos de Categoria */
-.header-alunos { background: #4a69bd; border-radius: 8px 8px 0 0; }
-.header-professores { background: #e67e22; border-radius: 8px 8px 0 0; }
-
-/* Tabela Customizada */
-.vk-table { width: 100%; border-collapse: collapse; background: white; border-radius: 4px; overflow: hidden; }
-.vk-table th { background: #d1d8e0; color: #4b6584; padding: 12px; font-size: 13px; text-transform: uppercase; border: 1px solid #b2bec3; }
-.vk-table td { padding: 10px; border: 1px solid #d1d8e0; text-align: center; font-weight: 500; color: #2f3640; }
-.vk-table tr:nth-child(even) { background: #f1f2f6; }
-
-/* Botões com Gradiente */
-.btn-generate {
-  background: linear-gradient(to bottom, #55a630, #2b9348);
-  border: 1px solid #1b4332;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  box-shadow: 0 4px 0 #1b4332;
+/* Cabeçalhos de Categoria Monocromáticos Mantidos */
+.header-alunos { 
+  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a); 
+  border-radius: 8px 8px 0 0; 
+  border-bottom: 1px solid #333;
 }
-.btn-generate:active { transform: translateY(2px); box-shadow: 0 2px 0 #1b4332; }
+.header-professores { 
+  background: linear-gradient(to bottom, #444444, #2b2b2b); 
+  border-radius: 8px 8px 0 0; 
+  border-bottom: 1px solid #555;
+}
+
+/* Tabela Customizada Monocromática Mantida */
+.vk-table { width: 100%; border-collapse: collapse; background: #1a1a1a; border-radius: 4px; overflow: hidden; }
+.vk-table th { background: #222; color: #aaa; padding: 12px; font-size: 12px; text-transform: uppercase; border: 1px solid #333; }
+.vk-table td { padding: 10px; border: 1px solid #333; text-align: center; font-weight: 500; color: #ddd; }
+.vk-table tr:nth-child(even) { background: #1f1f1f; }
+
+/* Base Comum para Botões Metálicos Grandes */
+.btn-vk-base {
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  transition: all 0.1s;
+}
+
+/* Botão VERDE METÁLICO (Aço Verde Combat) */
+.btn-generate-green {
+  composes: btn-vk-base;
+  background: linear-gradient(to bottom, #2d6a4f, #1b4332);
+  border: 1px solid #2d6a4f;
+  color: #fff;
+  box-shadow: 0 4px 0 #0d2119, 0 4px 10px rgba(0,0,0,0.5);
+}
+.btn-generate-green:hover { background: linear-gradient(to bottom, #3a8a66, #22523d); }
+.btn-generate-green:active { transform: translateY(4px); box-shadow: 0 0 0 #0d2119; }
+
+/* Botão AZUL METÁLICO */
+.btn-generate-blue {
+  composes: btn-vk-base;
+  background: linear-gradient(to bottom, #1e4a77, #102a44);
+  border: 1px solid #1e4a77;
+  color: #d1e3f3;
+  box-shadow: 0 4px 0 #081522, 0 4px 10px rgba(0,0,0,0.5);
+}
+.btn-generate-blue:hover { background: linear-gradient(to bottom, #265d95, #143557); color: #fff; }
+.btn-generate-blue:active { transform: translateY(4px); box-shadow: 0 0 0 #081522; }
+
+
+/* Botão LIMPAR (Fosco Preto com Escrita Vermelha) */
+.btn-danger-fosco {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #ff4d4f; /* Vermelho Fosco */
+  text-transform: uppercase;
+  font-weight: 900;
+  border-radius: 8px;
+  transition: all 0.1s;
+  box-shadow: 0 4px 0 #000;
+}
+.btn-danger-fosco:hover { background: #1a1a1a; color: #ff7875; }
+.btn-danger-fosco:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
+
+/* Botão EXPORTAR */
+.btn-secondary-fosco {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: #aaa;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: all 0.1s;
+  box-shadow: 0 4px 0 #111;
+}
+.btn-secondary-fosco:hover { background: #333; color: #fff; }
+.btn-secondary-fosco:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+
+/* Scrollbar e Impressão */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0a; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; border: 1px solid #111; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
 
 /* Estilos de Impressão / Exportação PDF */
 @media print {
@@ -86,4 +152,6 @@ body {
     font-size: 9px !important;
     margin: 0 4px !important;
   }
+.hide-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scroll::-webkit-scrollbar { display: none; }
 }
