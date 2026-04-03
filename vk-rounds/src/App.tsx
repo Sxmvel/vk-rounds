@@ -55,7 +55,7 @@ export default function App() {
             maxHeight: '100vh',
             maxWidth: 'calc(100vh * (1080 / 1920))', // Mantém a proporção exata sem cortar
             aspectRatio: '1080 / 1920',
-            backgroundImage: `url('/bg-app.png')`,
+            backgroundImage: `url('${import.meta.env.BASE_URL}bg-app.png')`,
             backgroundSize: '100% 100%', // Estica milimetricamente na proporção da div
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
