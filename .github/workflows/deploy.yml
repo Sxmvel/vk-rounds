@@ -15,6 +15,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    
+    defaults:
+      run:
+        working-directory: ./vk-rounds
+
     steps:
       - name: Baixar o código
         uses: actions/checkout@v4
@@ -36,7 +41,7 @@ jobs:
       - name: Upload dos arquivos
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './vk-rounds/dist'
 
       - name: Publicar site
         id: deployment
