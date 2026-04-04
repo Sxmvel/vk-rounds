@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Input, Select, message, ConfigProvider, theme } from 'antd';
+import { Button, Input, Select, message, ConfigProvider, theme, Modal } from 'antd';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { gerarEscalaDeRounds } from './core/engine';
 import type { Atleta, Round, ConfiguracaoTreino } from './types';
@@ -10,6 +10,7 @@ export default function App() {
   const [nome, setNome] = useState('');
   const [tipo, setTipo] = useState<'ALUNO' | 'PROFESSOR'>('ALUNO');
   const [config, setConfig] = useState<ConfiguracaoTreino>({ totalRounds: 8, roundsSeparados: 4 });
+  const [atletaFocoId, setAtletaFocoId] = useState<string | null>(null);
 
   const handleAdd = () => {
     if (!nome.trim()) return;
@@ -136,6 +137,21 @@ export default function App() {
               {/* TABELA E PDF */}
               {rounds.length > 0 && (
                 <div className="mt-2 border-t border-[#333] pt-3 animate-in fade-in">
+                  
+                  {/* BARRA DE BUSCA INDIVIDUAL */}
+                  <div className="bg-[#111] p-2 rounded-lg border border-[#333] mb-3 flex flex-col items-center print-hide">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Buscar minhas lutas:</span>
+                    <Select 
+                      showSearch 
+                      placeholder="Selecione seu nome..." 
+                      className="w-full font-bold uppercase"
+                      onChange={(id) => setAtletaFocoId(id)}
+                      value={null}
+                      filterOption={(input, option) => (option?.label as string ?? '').toLowerCase().includes(input.toLowerCase())}
+                      options={atletas.map(a => ({ value: a.id, label: a.nome }))}
+                    />
+                  </div>
+
                   <h3 className="text-center font-black text-gray-400 mb-2 text-[9px] uppercase tracking-widest print:text-black">Ordem de Combate</h3>
 
                   <div className="overflow-x-auto pb-2 hide-scroll print-expand">
@@ -188,6 +204,49 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      {/* MODAL DE FOCO DO ATLETA (CARTEL) */}
+      <Modal
+        open={!!atletaFocoId}
+        onCancel={() => setAtletaFocoId(null)}
+        footer={null}
+        centered
+        closeIcon={<span className="text-white font-bold text-lg hover:text-red-500">X</span>}
+        styles={{ 
+          body: { backgroundColor: '#111', padding: '16px' },
+          header: { backgroundColor: '#111', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '12px' }
+        }}
+        title={
+          <div className="text-center w-full uppercase font-black text-white italic text-lg tracking-widest">
+            {atletas.find(a => a.id === atletaFocoId)?.nome}
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto hide-scroll">
+          {rounds.map(r => {
+            const luta = r.confrontos.find(c => c.atleta1.id === atletaFocoId || c.atleta2.id === atletaFocoId);
+            const pausado = r.descansando?.id === atletaFocoId;
+            
+            if (!luta && !pausado) return null;
+
+            const adversario = luta?.atleta1.id === atletaFocoId ? luta?.atleta2.nome : luta?.atleta1.nome;
+
+            return (
+              <div key={r.numero} className="flex justify-between items-center bg-[#1a1a1a] border border-[#333] rounded-md p-3">
+                <span className="font-black text-gray-400 text-xs">R{r.numero}</span>
+                {pausado ? (
+                  <span className="font-black text-red-500 uppercase tracking-widest text-sm">Pausa</span>
+                ) : (
+                  <span className="font-bold text-gray-200 text-sm">
+                    vs <span className="font-black text-[#38b000] text-base uppercase">{adversario}</span>
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </Modal>
+
     </ConfigProvider>
   );
 }
