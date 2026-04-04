@@ -41,7 +41,7 @@ export default function App() {
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm, token: { colorPrimary: '#38b000', colorBgContainer: '#121212', colorBorder: '#333' } }}>
       <div className="flex justify-center items-center h-screen w-full bg-black overflow-hidden print-expand">
-        
+
         {/* O APARELHO (CANVAS) */}
         <div
           className="relative shadow-2xl print-expand bg-canvas"
@@ -69,7 +69,7 @@ export default function App() {
 
             {/* 📜 CONTEÚDO ROLÁVEL */}
             <div className="flex-1 overflow-y-auto hide-scroll flex flex-col gap-3 pt-3 print-expand">
-              
+
               <div className="bg-[#111]/90 p-2 rounded-lg border border-[#333] flex justify-between items-center print-hide">
                 <div className="flex flex-col">
                   <span className="text-[9px] text-gray-400 font-bold uppercase mb-1">Rounds Total</span>
@@ -80,7 +80,7 @@ export default function App() {
                 <div className="flex flex-col">
                   <span className="text-[9px] text-gray-400 font-bold uppercase mb-1">Separados</span>
                   <Select size="small" value={config.roundsSeparados} onChange={v => setConfig({ ...config, roundsSeparados: v })} className="w-14 font-bold">
-                    {[0, 1, 2, 4, 6].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
+                    {[0, 1, 2, 3, 4, 5, 6].map(n => <Select.Option key={n} value={n}>{n}</Select.Option>)}
                   </Select>
                 </div>
               </div>
@@ -137,13 +137,13 @@ export default function App() {
               {/* TABELA E PDF */}
               {rounds.length > 0 && (
                 <div className="mt-2 border-t border-[#333] pt-3 animate-in fade-in">
-                  
+
                   {/* BARRA DE BUSCA INDIVIDUAL */}
                   <div className="bg-[#111] p-2 rounded-lg border border-[#333] mb-3 flex flex-col items-center print-hide">
                     <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Buscar minhas lutas:</span>
-                    <Select 
-                      showSearch 
-                      placeholder="Selecione seu nome..." 
+                    <Select
+                      showSearch
+                      placeholder="Selecione seu nome..."
                       className="w-full font-bold uppercase"
                       onChange={(id) => setAtletaFocoId(id)}
                       value={null}
@@ -187,7 +187,7 @@ export default function App() {
                       </tbody>
                     </table>
                   </div>
-                  
+
                   {/* BOTOES FINAIS */}
                   <div className="flex flex-col gap-2 mt-3 pb-4 print-hide">
                     <button onClick={handleGerar} className="btn-generate-blue w-full py-2.5 text-[10px]">
@@ -212,7 +212,7 @@ export default function App() {
         footer={null}
         centered
         closeIcon={<span className="text-white font-bold text-lg hover:text-red-500">X</span>}
-        styles={{ 
+        styles={{
           body: { backgroundColor: '#111', padding: '16px' },
           header: { backgroundColor: '#111', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '12px' }
         }}
@@ -226,7 +226,7 @@ export default function App() {
           {rounds.map(r => {
             const luta = r.confrontos.find(c => c.atleta1.id === atletaFocoId || c.atleta2.id === atletaFocoId);
             const pausado = r.descansando?.id === atletaFocoId;
-            
+
             if (!luta && !pausado) return null;
 
             const adversario = luta?.atleta1.id === atletaFocoId ? luta?.atleta2.nome : luta?.atleta1.nome;
